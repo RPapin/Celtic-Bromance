@@ -1,0 +1,69 @@
+{
+  "entries": [
+    {
+      "drivers": {
+        "firstName": "Richard ",
+        "lastName": "Aconley",
+        "playerID": "76561197961422699",
+        "forcedCarModel": -1,
+        "overrideDriverInfo": 1
+      }
+    },
+    {
+      "drivers": {
+        "firstName": "Remi",
+        "lastName": "Papin",
+        "playerID": "76561198445003541",
+        "forcedCarModel": -1,
+        "overrideDriverInfo": 1,
+        "isServerAdmin": 1
+      }
+    },
+    {
+      "drivers": {
+        "firstName": "Matt",
+        "lastName": "Cooley",
+        "playerID": "76561198068476241",
+        "forcedCarModel": -1,
+        "overrideDriverInfo": 1
+      }
+    },
+    {
+      "drivers": {
+        "firstName": "Ryan",
+        "lastName": "Rees",
+        "playerID": "76561198185331603",
+        "forcedCarModel": -1,
+        "overrideDriverInfo": 1
+      }
+    },
+    {
+      "drivers": {
+        "firstName": "Alastair",
+        "lastName": "Baldwin",
+        "playerID": "76561198098376975",
+        "forcedCarModel": -1,
+        "overrideDriverInfo": 1
+      }
+    },
+    {
+      "drivers": {
+        "firstName": "Kiki",
+        "lastName": "Mac",
+        "playerID": "76561198007462534",
+        "forcedCarModel": -1,
+        "overrideDriverInfo": 1
+      }
+    },
+    {
+      "drivers": {
+        "firstName": "STEPHEN",
+        "lastName": "CARRY",
+        "playerID": "76561197981477833",
+        "forcedCarModel": -1,
+        "overrideDriverInfo": 1
+      }
+    }
+  ],
+  "forceEntryList": 1
+}
