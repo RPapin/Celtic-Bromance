@@ -1,0 +1,30 @@
+.header {
+    display: flex;
+    justify-content: space-around;
+}
+
+.actionsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.actionContainer {
+    width: 20rem;
+    text-align: center;
+    margin: 1.5rem 1rem;
+    padding: 1.5rem 1rem;
+    background-color: #ced7ef;
+    color: gray;
+    vertical-align: middle;
+    box-shadow: 0 0 10px;
+    display: flex;
+    flex-direction: column;
+}
+.strong {
+    font-weight: bold;
+}
+.actionTitle {
+    font-weight: bold;
+    font-size: 1.5rem; 
+    margin-bottom: 0.2rem;
+}
