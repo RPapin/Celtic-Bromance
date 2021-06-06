@@ -21,15 +21,18 @@ def home():
 @cross_origin()
 def start_championnship():
     firstRoundSettings = accR.startChampionnship()
-    print(firstRoundSettings)
     return jsonify(firstRoundSettings)
-@app.route('/next_round', methods=['GET'])
-def next_round():
-    return "Tbd"
 @app.route('/display_result', methods=['GET'])
 def display_result():
-    return "Tbd"
+    fullResult = accR.checkResult()
+    return fullResult
         
+@app.route('/launch_server', methods=['GET'])
+def launch_server():
+    serverStatus = accR.launchServer()
+    return jsonify(serverStatus)
+
+
 @app.route('/api/v1/resources/books', methods=['GET'])
 def api_id():
     # Check if an ID was provided as part of the URL.

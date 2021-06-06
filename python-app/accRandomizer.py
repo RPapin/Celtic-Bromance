@@ -1,10 +1,20 @@
 import json
 import random
+from os import listdir
+from os.path import isfile, join
+import subprocess
+import os
+from shutil import copyfile
 
-accServerPath = "D:/Steam/steamapps/common/Assetto Corsa Competizione Dedicated Server/server/cfg/"
 
+accServerPath = "D:/Steam/steamapps/common/Assetto Corsa Competizione Dedicated Server/server/"
+accServerPathCfg = accServerPath + "cfg/"
+accServerPathResult = accServerPath + "results/"
 dataPath = "Data/"
 templatePath = "Template/"
+# Static cfg files, just need to put in the server folder
+configFiles=["assistRules.json", "configuration.json", "settings.json"] 
+
 
 def init():
     with open(dataPath + 'cars.json') as json_file:
@@ -52,7 +62,7 @@ def makeEventConfig(trackData, weatherData) :
         "Time Multipler": finalEvent["sessions"][0]["timeMultiplier"],
         "Hour of Day": finalEvent["sessions"][0]["hourOfDay"]
     })
-    with open(accServerPath + 'event.json', 'w') as outfile:
+    with open(accServerPathCfg + 'event.json', 'w') as outfile:
         json.dump(finalEvent, outfile)
         outfile.close()
     return eventInfo
@@ -77,13 +87,15 @@ def makeFirstRace(carsData) :
     startingPlace = 1
     for userData in data :
         userCar = random.choice(list(carClassList.keys()))
-        userEntry = {"drivers" : {
-            "firstName": userData["First name"],
-            "lastName": userData["Surname"],
-            "playerID": userData["Steam id "],
-            "forcedCarModel": userCar,
+        userEntry = {
+            "drivers" : [{
+                "firstName": userData["First name"],
+                "lastName": userData["Surname"],
+                "playerID": "S" + userData["Steam id "],
+            }],
+            "forcedCarModel": int(userCar),
             "overrideDriverInfo": 1,
-            }}
+        }
         userInfo = {
             "firstName": userData["First name"],
             "lastName": userData["Surname"],
@@ -92,14 +104,14 @@ def makeFirstRace(carsData) :
         }
         # I put myself as admin
         if userData["Steam id "] == "76561198445003541" :
-            userEntry["drivers"]["isServerAdmin"] = 1
+            userEntry["isServerAdmin"] = 1
         finalEntryList["entries"].append(userEntry)
         finalUserInfo.append(userInfo)
         startingPlace += 1
         if len(carClassList) > 1:
             carClassList.pop(userCar)
 
-    with open(accServerPath + 'entrylist.json', 'w') as outfile:
+    with open(accServerPathCfg + 'entrylist.json', 'w') as outfile:
         json.dump(finalEntryList, outfile)
         outfile.close()
 
@@ -122,4 +134,15 @@ def nextRound():
     carsData, trackData, weatherData = init()
     makeAnotherRace(carsData)
     makeEventConfig(trackData, weatherData)
-# startChampionnship()
+
+def checkResult():
+    onlyfiles = [f for f in listdir(accServerPathResult) if isfile(join(accServerPathResult, f))]
+    print(onlyfiles)
+
+def launchServer():
+    for fileName in configFiles:
+        os.remove(accServerPathCfg + fileName)
+        copyfile(templatePath + fileName, accServerPathCfg + fileName)
+    subprocess.call('start "" "D:\Steam\steamapps\common\Assetto Corsa Competizione Dedicated Server\server/launch_server.sh"', shell=True)
+    return True
+startChampionnship()

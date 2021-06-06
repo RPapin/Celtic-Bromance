@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import ReadData from '../../services/readData'
 import Button from 'react-bootstrap/Button';
 import './dashboard.css'
+import ChampionnshipResult from '../championnshipResult/championnshipResult';
 
 
 const Dashboard = (props) => {
@@ -9,8 +10,7 @@ const Dashboard = (props) => {
    
     const [infoNextRound, setInfoNextRound] = useState()
     const [gridNextRound, setGridNextRound] = useState()
-    const [newsData, setNewsData] = useState()
-    const [loading, setLoading] = useState(true)
+    const [fullResult, setFullResult] = useState(false)
 
     const startChampionnship = async () => {
         let firstRoundInfo = await readData.startChampionnship()
@@ -18,27 +18,27 @@ const Dashboard = (props) => {
         const gridInfo = JSON.parse(JSON.stringify(firstRoundInfo.usersInfo))
         let eventInfoArray = [] 
         Object.keys(eventInfo).forEach(key => eventInfoArray.push([key, eventInfo[key]]))
-        console.log(gridInfo)
         setGridNextRound(gridInfo)
         setInfoNextRound(eventInfoArray)
-        
     }
-    useEffect( () => {
+    const lunchServer = async () => {
+        let serverStatus = await readData.launchServer()
+        console.log("server :" + serverStatus)
+    }
 
+    useEffect( () => {
+        const seeResult = async () => {
+            let firstRoundInfo = await readData.seeResult()
+            setFullResult(firstRoundInfo)
+        }
+        if(!fullResult)seeResult()
     }, [infoNextRound])
     return (
 
     <div className={'container'}>
         
-        <div className="header">
-            <div className="generalInfo">
-                Celtic Bromance Championnship
-            </div>
-        </div>
-        
         <div className='actionsContainer'>
-            <Button variant="outline-primary" onClick={startChampionnship}>Start a new Championnship !</Button>
-
+            <Button variant="outline-primary" onClick={startChampionnship}>Start a new championnship !</Button>
         </div>
         {infoNextRound && 
             <div className="infoNextRound">
@@ -54,8 +54,10 @@ const Dashboard = (props) => {
                         return (<li key={i}>{i + 1}) {label["lastName"]} {label["firstName"]} : {label["car"]}</li>)
                     })}
                 </ul>
+                <Button variant="outline-primary" onClick={lunchServer}>Launch the server </Button>
             </div>
         }   
+        <ChampionnshipResult fullResult={fullResult}/>
     </div>
     )
 

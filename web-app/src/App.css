@@ -1,8 +1,8 @@
 .App {
-  text-align: center;
-  margin: 1rem
-}
-section {
-  height: 100vh;
+  display: flex;
+  margin: 1rem;
+  flex-direction: column;
   background-color: #f7f7f7;
+  height: 100vh;
 }
+h1 { color: #7c795d; font-family: 'Trocchi', serif; font-size: 45px; font-weight: normal; line-height: 48px; margin: 0; }
