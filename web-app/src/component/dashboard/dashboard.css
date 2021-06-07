@@ -1,4 +1,17 @@
-
+.container {
+    min-width: 600px;
+    max-width: 900px;
+}
+.fullContainer {
+    display: flex;
+    flex-direction: row;
+}
+@media only screen  
+and (max-width : 1524px) {
+    .fullContainer {
+        flex-wrap: wrap;
+    }
+}
 .actionsContainer {
     display: flex;
     flex-wrap: wrap;
@@ -15,4 +28,7 @@
     box-shadow: 0 0 10px;
     display: flex;
     flex-direction: column;
+}
+.bottomBtn{
+    margin-right: 1rem!important;
 }

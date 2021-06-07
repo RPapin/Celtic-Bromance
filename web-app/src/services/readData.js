@@ -6,7 +6,6 @@ export default class ReadData {
     async startChampionnship() {
         const fecthedData = await fetch(baseURL + 'start_championnship')
         .then(res => {
-            console.log(res)
             return res.json()
         })
         .then((data) => {
@@ -15,10 +14,8 @@ export default class ReadData {
         return fecthedData
     }
     async seeResult() {
-        console.log("call to seeResult")
         const fecthedData = await fetch(baseURL + 'display_result')
         .then(res => {
-            console.log(res)
             return res.json()
         })
         .then((data) => {
@@ -27,10 +24,8 @@ export default class ReadData {
         return fecthedData
     }
     async launchServer() {
-        console.log("call to launchServer")
         const fecthedData = await fetch(baseURL + 'launch_server')
         .then(res => {
-            console.log(res)
             return res.json()
         })
         .then((data) => {

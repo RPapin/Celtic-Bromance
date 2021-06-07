@@ -5,6 +5,7 @@ from os.path import isfile, join
 import subprocess
 import os
 from shutil import copyfile
+import re
 
 
 accServerPath = "D:/Steam/steamapps/common/Assetto Corsa Competizione Dedicated Server/server/"
@@ -26,6 +27,7 @@ def init():
     with open(dataPath + 'weatherConfiguration.json') as json_file:
         weatherData = json.load(json_file)
         json_file.close()
+
 
     return carsData, trackData, weatherData
 
@@ -67,7 +69,7 @@ def makeEventConfig(trackData, weatherData) :
         outfile.close()
     return eventInfo
 
-def makeFirstRace(carsData) : 
+def makeNewRace(carsData, raceNumber) : 
     """ Create random entrylist + random track and cars """
     with open(dataPath + 'defaultEntryList.json') as json_file:
         data = json.load(json_file)
@@ -77,8 +79,27 @@ def makeFirstRace(carsData) :
     carClass = random.choice(list(carsData.keys()))
     carClass = carsData[carClass]["class"]
     carClassList  = dict(filter(lambda elem: elem[1]["class"] == carClass,carsData.items()))
+    #First race
+    if raceNumber == 1:
+        random.shuffle(data)
+    #next race
+    else :
+        with open(dataPath + 'result.json') as json_file:
+            resultData = json.load(json_file)
+            json_file.close()
+        currentNbDriver = len(resultData['championnshipStanding'])
+        j = 1
+        for driverData in data:
+            driver_position = next((index for (index, d) in enumerate(resultData['championnshipStanding']) if d["playerId"] == 'S' + driverData['Steam id ']), -1) 
+            if driver_position == -1 :
+                driverData['position'] = currentNbDriver + j 
+                j+= 1
+            else :
+                driverData['position'] = currentNbDriver - driver_position 
+                driverData['ballast'] = int(resultData['championnshipStanding'][driver_position]['point'])
+        data = sorted(data, key=lambda k: k['position']) 
+        print(data)
 
-    random.shuffle(data)
     finalEntryList = {
         "entries" : [],
         "forceEntryList": 1
@@ -87,6 +108,11 @@ def makeFirstRace(carsData) :
     startingPlace = 1
     for userData in data :
         userCar = random.choice(list(carClassList.keys()))
+        userData['restrictor'] = 0
+        if "ballast" not in userData:
+            userData['ballast'] = 0
+        elif userData['ballast'] > 100 :
+            userData['restrictor'] = int((userData['ballast'] - 100) / 5)
         userEntry = {
             "drivers" : [{
                 "firstName": userData["First name"],
@@ -95,12 +121,16 @@ def makeFirstRace(carsData) :
             }],
             "forcedCarModel": int(userCar),
             "overrideDriverInfo": 1,
+            "ballastKg" : userData['ballast'],
+            "restrictor" : userData['restrictor'] 
         }
         userInfo = {
             "firstName": userData["First name"],
             "lastName": userData["Surname"],
             "starting_place": startingPlace,
-            "car" : carClassList[userCar]["model"]
+            "car" : carClassList[userCar]["model"],
+            "ballast" : userData['ballast'],
+            "restrictor" : userData['restrictor'] 
         }
         # I put myself as admin
         if userData["Steam id "] == "76561198445003541" :
@@ -122,7 +152,7 @@ def makeAnotherRace(resultData):
 
 def startChampionnship():
     carsData, trackData, weatherData = init()
-    usersInfo = makeFirstRace(carsData)
+    usersInfo = makeNewRace(carsData, 1)
     eventConfig = makeEventConfig(trackData, weatherData)
     firstRoundInfo = {
         "eventInfo": eventConfig,
@@ -132,17 +162,94 @@ def startChampionnship():
 
 def nextRound():
     carsData, trackData, weatherData = init()
-    makeAnotherRace(carsData)
-    makeEventConfig(trackData, weatherData)
+    usersInfo = makeNewRace(carsData, 2)
+    eventConfig = makeEventConfig(trackData, weatherData)
+    nextRoundInfo = {
+        "eventInfo": eventConfig,
+        "usersInfo": usersInfo
+    }
+    return nextRoundInfo
 
 def checkResult():
     onlyfiles = [f for f in listdir(accServerPathResult) if isfile(join(accServerPathResult, f))]
-    print(onlyfiles)
+    raceFile = ""
+    for fileName in onlyfiles:
+        splitList = fileName.split("_")
+        if splitList[2] == "R.json":
+            raceFile = fileName
+    with open(dataPath + 'result.json') as json_file:
+        olderResult = json.load(json_file)
+        json_file.close()
+    if len(raceFile) > 0 :
+        with open(accServerPathResult + raceFile, 'r', encoding="utf-16") as json_file: #accServerPathResult + raceFile
+            correctFile = json_file.read()
+            resultFile = json.loads(correctFile)
+            json_file.close()
+        with open(dataPath + 'championnshipConfiguration.json') as json_file:
+            championnshipData = json.load(json_file)
+            json_file.close()
 
+        raceNumber = len(olderResult['raceResult']) + 1 
+        currentResult = []
+        driverStandings = {}
+        pos = 1
+        index = 0    
+        #List driver and pos before current race
+        for driver in olderResult['championnshipStanding']:
+            driverId = driver["playerId"]
+            driverStandings[driverId] = index
+            index += 1
+
+        for driverResult in resultFile["sessionResult"]["leaderBoardLines"]:
+            #Set race point
+            if pos < len(championnshipData["pointConfiguration"]):
+                racePoint = championnshipData["pointConfiguration"][pos - 1]
+            else :
+                racePoint = 0
+            #race result
+            driverResult["currentDriver"]["position"] = pos
+            driverResult["currentDriver"]["point"] = racePoint
+            currentResult.append(driverResult["currentDriver"])
+            #championnship Standing
+            driverId = driverResult["currentDriver"]["playerId"]
+            if driverId in driverStandings:
+                olderResult['championnshipStanding'][driverStandings[driverId]]['point'] += racePoint
+            else :
+                driverResult["currentDriver"]["point"] = racePoint
+                olderResult['championnshipStanding'].append(driverResult["currentDriver"])
+            pos +=1
+
+        olderResult["raceResult"].append({
+            raceNumber : currentResult
+        })
+        #Sort standings
+        olderResult['championnshipStanding'] = sorted(olderResult['championnshipStanding'], key=lambda k: k['point'], reverse=True) 
+        with open(dataPath + 'result.json', 'w') as outfile:
+            json.dump(olderResult, outfile)
+            outfile.close()
+        os.renames(accServerPathResult + raceFile, "resultsSave/" + raceFile)
+        #Prepare next race
+        nextRoundInfo = nextRound()
+        return {
+            "standings" : olderResult,
+            "nextRoundInfo" : nextRoundInfo
+        }
+    else :
+        return {
+            "standings" : olderResult
+        }
+def resetChampionnship():
+    with open(dataPath + 'result.json') as json_file:
+        olderResult = json.load(json_file)
+        json_file.close()
+    olderResult["championnshipStanding"] = olderResult["raceResult"] = []
+    with open(dataPath + 'result.json', 'w') as outfile:
+        json.dump(olderResult, outfile)
+        outfile.close()
+    
 def launchServer():
     for fileName in configFiles:
         os.remove(accServerPathCfg + fileName)
         copyfile(templatePath + fileName, accServerPathCfg + fileName)
     subprocess.call('start "" "D:\Steam\steamapps\common\Assetto Corsa Competizione Dedicated Server\server/launch_server.sh"', shell=True)
     return True
-startChampionnship()

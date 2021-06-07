@@ -25,38 +25,40 @@ const Dashboard = (props) => {
         let serverStatus = await readData.launchServer()
         console.log("server :" + serverStatus)
     }
+    const seeResult = async () => {
+        let firstRoundInfo = await readData.seeResult()
+        setFullResult(firstRoundInfo)
+    }
+    // useEffect( () => {
 
-    useEffect( () => {
-        const seeResult = async () => {
-            let firstRoundInfo = await readData.seeResult()
-            setFullResult(firstRoundInfo)
-        }
-        if(!fullResult)seeResult()
-    }, [infoNextRound])
+    //     if(!fullResult)seeResult()
+    // }, [infoNextRound])
     return (
 
-    <div className={'container'}>
-        
-        <div className='actionsContainer'>
-            <Button variant="outline-primary" onClick={startChampionnship}>Start a new championnship !</Button>
-        </div>
-        {infoNextRound && 
-            <div className="infoNextRound">
-                Info Next Round :
+    <div className={'fullContainer'}>
+        <div className={'container'}>
+            <div className='actionsContainer'>
+                <Button variant="outline-primary" onClick={startChampionnship}>Start a new championnship !</Button>
+            </div>
+            {infoNextRound && 
+                <div className="infoNextRound">
+                    Info Next Round :
+                        <ul>
+                            {infoNextRound.map((label, i) => {
+                                return (<li key={i}>{label[0]} : {label[1]}</li>)
+                            })}
+                        </ul>
+                    Starting grid : 
                     <ul>
-                        {infoNextRound.map((label, i) => {
-                            return (<li key={i}>{label[0]} : {label[1]}</li>)
+                        {gridNextRound.map((label, i) => {
+                            return (<li key={i}>{i + 1}) {label["lastName"]} {label["firstName"]} : {label["car"]} , ballast : {label["ballast"]}</li>)
                         })}
                     </ul>
-                Starting grid : 
-                <ul>
-                    {gridNextRound.map((label, i) => {
-                        return (<li key={i}>{i + 1}) {label["lastName"]} {label["firstName"]} : {label["car"]}</li>)
-                    })}
-                </ul>
-                <Button variant="outline-primary" onClick={lunchServer}>Launch the server </Button>
-            </div>
-        }   
+                    <Button variant="outline-primary" onClick={lunchServer} className="bottomBtn">Launch the server </Button>
+                    <Button variant="outline-primary" onClick={seeResult}>Check Result</Button>
+                </div>
+            }   
+        </div>
         <ChampionnshipResult fullResult={fullResult}/>
     </div>
     )

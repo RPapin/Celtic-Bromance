@@ -25,6 +25,7 @@ def start_championnship():
 @app.route('/display_result', methods=['GET'])
 def display_result():
     fullResult = accR.checkResult()
+    print(fullResult)
     return fullResult
         
 @app.route('/launch_server', methods=['GET'])
