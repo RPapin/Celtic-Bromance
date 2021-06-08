@@ -6,13 +6,15 @@ import subprocess
 import os
 from shutil import copyfile
 import re
+from datetime import date
 
-
+today = date.today()
 accServerPath = "D:/Steam/steamapps/common/Assetto Corsa Competizione Dedicated Server/server/"
 accServerPathCfg = accServerPath + "cfg/"
 accServerPathResult = accServerPath + "results/"
 dataPath = "Data/"
 templatePath = "Template/"
+savesPath = "saves/"
 # Static cfg files, just need to put in the server folder
 configFiles=["assistRules.json", "configuration.json", "settings.json"] 
 
@@ -67,6 +69,7 @@ def makeEventConfig(trackData, weatherData) :
     with open(accServerPathCfg + 'event.json', 'w') as outfile:
         json.dump(finalEvent, outfile)
         outfile.close()
+
     return eventInfo
 
 def makeNewRace(carsData, raceNumber) : 
@@ -98,7 +101,6 @@ def makeNewRace(carsData, raceNumber) :
                 driverData['position'] = currentNbDriver - driver_position 
                 driverData['ballast'] = int(resultData['championnshipStanding'][driver_position]['point'])
         data = sorted(data, key=lambda k: k['position']) 
-        print(data)
 
     finalEntryList = {
         "entries" : [],
@@ -113,6 +115,9 @@ def makeNewRace(carsData, raceNumber) :
             userData['ballast'] = 0
         elif userData['ballast'] > 100 :
             userData['restrictor'] = int((userData['ballast'] - 100) / 5)
+            if userData['restrictor'] > 20 :
+                userData['restrictor'] = 20
+            userData['ballast'] = 100
         userEntry = {
             "drivers" : [{
                 "firstName": userData["First name"],
@@ -147,17 +152,19 @@ def makeNewRace(carsData, raceNumber) :
 
     return finalUserInfo
 
-def makeAnotherRace(resultData):
-    print("makeAnotherRace")
-
 def startChampionnship():
     carsData, trackData, weatherData = init()
     usersInfo = makeNewRace(carsData, 1)
     eventConfig = makeEventConfig(trackData, weatherData)
     firstRoundInfo = {
         "eventInfo": eventConfig,
-        "usersInfo": usersInfo
+        "usersInfo": usersInfo,
+        "foundNewResults" : "A new Championnship has begun !"
     }
+        # Save next round config
+    with open(savesPath + 'nextRound.json', 'w') as outfile:
+        json.dump(firstRoundInfo, outfile)
+        outfile.close()
     return firstRoundInfo
 
 def nextRound():
@@ -168,6 +175,10 @@ def nextRound():
         "eventInfo": eventConfig,
         "usersInfo": usersInfo
     }
+        # Save next round config
+    with open(savesPath + 'nextRound.json', 'w') as outfile:
+        json.dump(nextRoundInfo, outfile)
+        outfile.close()
     return nextRoundInfo
 
 def checkResult():
@@ -227,26 +238,50 @@ def checkResult():
         with open(dataPath + 'result.json', 'w') as outfile:
             json.dump(olderResult, outfile)
             outfile.close()
-        os.renames(accServerPathResult + raceFile, "resultsSave/" + raceFile)
+        os.renames(accServerPathResult + raceFile, savesPath + raceFile)
         #Prepare next race
         nextRoundInfo = nextRound()
+        raceNumber = str(raceNumber + 1)
         return {
             "standings" : olderResult,
-            "nextRoundInfo" : nextRoundInfo
+            "nextRoundInfo" : nextRoundInfo,
+            "foundNewResults" : "New results has been found. Race " + raceNumber + " informations are available"
         }
+    elif isfile(savesPath + 'nextRound.json'):
+        with open(savesPath + 'nextRound.json') as json_file:
+            nextRoundInfo = json.load(json_file)
+            json_file.close()
+        if olderResult['championnshipStanding'] == []:
+            olderResult = None
+        return {
+            "standings" : olderResult,
+            "nextRoundInfo" : nextRoundInfo,
+            "foundNewResults" : False
+        }
+    #No current championnship
     else :
         return {
-            "standings" : olderResult
+            "standings" : None,
+            "nextRoundInfo" : None,
+            "foundNewResults" : False
         }
 def resetChampionnship():
     with open(dataPath + 'result.json') as json_file:
         olderResult = json.load(json_file)
         json_file.close()
+
+    #TODO remove saves file
+    os.remove(savesPath + "nextRound.json")
+    saveName = 'finalSave_' + today.strftime("%d_%m_%Y") + '.json'
+    with open(savesPath + saveName, 'w') as outfile:
+        json.dump(olderResult, outfile)
+        outfile.close()
     olderResult["championnshipStanding"] = olderResult["raceResult"] = []
     with open(dataPath + 'result.json', 'w') as outfile:
         json.dump(olderResult, outfile)
         outfile.close()
-    
+    return True
+
 def launchServer():
     for fileName in configFiles:
         os.remove(accServerPathCfg + fileName)

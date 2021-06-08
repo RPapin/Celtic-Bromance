@@ -12,7 +12,7 @@ const ChampionnshipResult = (props) => {
     const displayStandings = (raceNumber) => {
         //Display position per race
         const renderRaceResult = (playerId) => {
-            let inter =  props.fullResult['standings']['raceResult'].map((answer, i) => {      
+            let inter =  props.fullResult['raceResult'].map((answer, i) => {      
                 let j = 1
                 return answer[i + 1].map((element) => { 
                     if(element['playerId'] == playerId){
@@ -27,13 +27,14 @@ const ChampionnshipResult = (props) => {
             return inter
         }
         if(raceNumber === -1){
+            //Display standings
             return (
             <Table responsive>
                 <thead>
                     <tr>
                     <th>Position</th>
                     <th>Name</th>
-                    {props.fullResult['standings']['raceResult'].map((answer, i) => {       
+                    {props.fullResult['raceResult'].map((answer, i) => {       
                         return (<th>Race {i + 1}</th>) 
                     })}
                     <th>Total Point</th>
@@ -41,15 +42,13 @@ const ChampionnshipResult = (props) => {
                 </thead>
                 <tbody>
                     
-                    {props.fullResult['standings']['championnshipStanding'].map((driverInfo, i) => {     
-                        return (<tr><td>{i + 1}</td><td>{driverInfo['firstName'] + ' ' + driverInfo['lastName']}</td>{renderRaceResult(driverInfo['playerId'])}<td>{driverInfo['point']}</td></tr>) 
+                    {props.fullResult['championnshipStanding'].map((driverInfo, i) => {     
+                        return (<tr key={i}><td>{i + 1}</td><td>{driverInfo['firstName'] + ' ' + driverInfo['lastName']}</td>{renderRaceResult(driverInfo['playerId'])}<td>{driverInfo['point']}</td></tr>) 
                     })}
                     
                 </tbody>
             </Table>)
         } else {
-            console.log(raceNumber)
-            console.log(props.fullResult['standings']['raceResult'][raceNumber][raceNumber + 1])
             //display race result
             return (
                 <Table responsive>
@@ -61,15 +60,13 @@ const ChampionnshipResult = (props) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {props.fullResult['standings']['raceResult'][raceNumber][raceNumber + 1].map((driverInfo, i) => {     
-                            return (<tr><td>{i + 1}</td><td>{driverInfo['firstName'] + ' ' + driverInfo['lastName']}</td><td>{driverInfo['point']}</td></tr>) 
+                        {props.fullResult['raceResult'][raceNumber][raceNumber + 1].map((driverInfo, i) => {     
+                            return (<tr key={i}><td>{i + 1}</td><td>{driverInfo['firstName'] + ' ' + driverInfo['lastName']}</td><td>{driverInfo['point']}</td></tr>) 
                         })}
                         
                     </tbody>
                 </Table>)
         }
-        
-        return raceNumber
     }
     useEffect( () => {
        
@@ -87,8 +84,8 @@ const ChampionnshipResult = (props) => {
                 <Tab eventKey={"Standings"} title={"Standings"}>
                     {displayStandings(-1)}
                 </Tab>
-                { props.fullResult['standings']['raceResult'].map((answer, i) => {       
-                    return (<Tab eventKey={i} title={"Race"  + (i + 1)}>{displayStandings(i)}</Tab>) 
+                { props.fullResult['raceResult'].map((answer, i) => {       
+                    return (<Tab eventKey={i} title={"Race "  + (i + 1)}>{displayStandings(i)}</Tab>) 
                 })}
             </Tabs>
         </>

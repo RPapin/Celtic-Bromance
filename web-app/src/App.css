@@ -1,8 +1,19 @@
 .App {
   display: flex;
-  margin: 1rem;
+  padding: 1rem 5rem;
   flex-direction: column;
   background-color: #f7f7f7;
-  height: 100vh;
+  align-items: center;
+  justify-content: space-around;
+  max-height: 100%;
+}
+@media only screen  
+and (max-width : 1524px) {
+    .App {
+      padding: 1rem 1rem;
+    }
+}
+html, body, #root, .App {
+  height: 100%
 }
 h1 { color: #7c795d; font-family: 'Trocchi', serif; font-size: 45px; font-weight: normal; line-height: 48px; margin: 0; }

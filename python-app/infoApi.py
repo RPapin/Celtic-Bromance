@@ -25,14 +25,16 @@ def start_championnship():
 @app.route('/display_result', methods=['GET'])
 def display_result():
     fullResult = accR.checkResult()
-    print(fullResult)
     return fullResult
         
 @app.route('/launch_server', methods=['GET'])
 def launch_server():
     serverStatus = accR.launchServer()
     return jsonify(serverStatus)
-
+@app.route('/reset_championnship', methods=['GET'])
+def reset_championnship():
+    serverStatus = accR.resetChampionnship()
+    return jsonify(serverStatus)
 
 @app.route('/api/v1/resources/books', methods=['GET'])
 def api_id():

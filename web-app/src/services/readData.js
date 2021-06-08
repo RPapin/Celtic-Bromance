@@ -33,5 +33,14 @@ export default class ReadData {
         })
         return fecthedData
     }
-    
+    async resetChampionnship() {
+        const fecthedData = await fetch(baseURL + 'reset_championnship')
+        .then(res => {
+            return res.json()
+        })
+        .then((data) => {
+            return data
+        })
+        return fecthedData
+    }
 }
