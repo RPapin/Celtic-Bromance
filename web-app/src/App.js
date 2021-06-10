@@ -10,12 +10,13 @@ function App() {
 
   useEffect(() => {
     let adminLocal = localStorage.getItem('admin')
-    if(adminLocal)setAdmin(true)
-    }, [])
+    if(adminLocal !== "false")setAdmin(adminLocal)
+
+    }, [admin])
   return (
     <div className="App">
-        <Header/>
-        <Dashboard admin={admin}/>
+        <Header admin={admin} setAdmin={setAdmin}/>
+        <Dashboard admin={admin} setAdmin={setAdmin}/>
     </div>
   );
 }

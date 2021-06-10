@@ -5,18 +5,21 @@ import Form from 'react-bootstrap/Form';
 import './adminPanel.css'
 
 
-const AdminPanel = ({closeAdminPanel}) => {
+const AdminPanel = ({admin, setAdmin, closeAdminPanel}) => {
 
     const [show, setShow] = useState(true);
     const [password, setPassword] = useState()
-
+    const [errorMsg, setErrorMsg] = useState()
+    
     const handleClose = () => setShow(false);
     
     const checkAdmin = (event) => {
+      event.preventDefault();
         if(password == 'aaa'){
           localStorage.setItem('admin', true);
-        }
-        closeAdminPanel()
+          setAdmin(true)
+          closeAdminPanel()
+        } else setErrorMsg("Wrong admin password")
     }   
 
     return (
@@ -31,14 +34,14 @@ const AdminPanel = ({closeAdminPanel}) => {
             
                 <Form.Label>Enter the admin password</Form.Label>
                 <Form.Control type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)}/>
-
+                <div className='errorMsg'>{errorMsg}</div>
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={handleClose}>
                 Close
                 </Button>
                 <Button variant="primary" type="submit">
-                GO 
+                Go 
                 </Button>
             
            </Modal.Footer>

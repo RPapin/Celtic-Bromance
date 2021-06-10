@@ -6,7 +6,7 @@ import ChampionnshipResult from '../championnshipResult/championnshipResult';
 import ModalCheck from '../modals/modalCheck';
 
 
-const Dashboard = (props) => {
+const Dashboard = ({admin, setAdmin}) => {
     const readData = new ReadData()
    
     const [infoNextRound, setInfoNextRound] = useState()
@@ -30,11 +30,9 @@ const Dashboard = (props) => {
     }
     const lunchServer = async () => {
         let serverStatus = await readData.launchServer()
-        console.log("server :" + serverStatus)
     }
     const seeResult = async () => {
         let allInfo = await readData.seeResult()
-        console.log(allInfo)
         if(allInfo['nextRoundInfo']){
             allInfo['nextRoundInfo']['foundNewResults'] = allInfo['foundNewResults']
             getNextRoundInfo(allInfo['nextRoundInfo'])
@@ -50,7 +48,7 @@ const Dashboard = (props) => {
         setNewResult('Championship has been reset')
     }
     useEffect( () => {
-        console.log(props.admin)
+        console.log('dash ' + admin)
         if(!loading)seeResult()
     }, [])
     return (
@@ -79,11 +77,15 @@ const Dashboard = (props) => {
                             return (<li key={i}>{i + 1}) {label["lastName"]} {label["firstName"]} : {label["car"]} , ballast : {label["ballast"]}, restrictor : {label["restrictor"]}</li>)
                         })}
                     </ul>
+                {admin && 
+                    <div className="adminDiv">
                     <Button variant="outline-primary" onClick={lunchServer} className="bottomBtn">Launch the server </Button>
                     <Button variant="outline-primary" onClick={seeResult} className="bottomBtn">Check Result</Button>
                     <Button variant="outline-danger" onClick={() => {
                         if(window.confirm("You are going to delete the current championnship"))resetChampionnship()
                     }}>Reset Championnship</Button>
+                    </div>
+                }
                 </div>
             }   
         </div>

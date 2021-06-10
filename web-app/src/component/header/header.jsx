@@ -5,15 +5,19 @@ import './header.css'
 import AdminPanel from '../adminPanel/adminPanel';
 
 
-const Header = (props) => {
+const Header = ({admin, setAdmin}) => {
     const readData = new ReadData()
     const [adminPanel, setAdminPanel] = useState(false)
     const showAdminPanel = () => {
         setAdminPanel(true)
     }
     const closeAdminPanel = () => {
-        console.log( console.log('useEffect admin ' + adminPanel))
         setAdminPanel(false)
+    }
+    const setAdminChild = (value) => {
+        localStorage.setItem('admin', value);
+        console.log("setAdminChild " + value)
+        setAdmin(value)
     }
     return (
 
@@ -27,11 +31,12 @@ const Header = (props) => {
 
             <Dropdown.Menu>
                 <Dropdown.Item href="#/action-1">View older results</Dropdown.Item>
-                <Dropdown.Item onClick={showAdminPanel}>Admin Table</Dropdown.Item>
+                {!admin && <Dropdown.Item onClick={showAdminPanel}>Admin Table</Dropdown.Item>}
+                {admin && <Dropdown.Item onClick={() => setAdminChild(false)}>Log out</Dropdown.Item>}
             </Dropdown.Menu>
         </Dropdown>
         {adminPanel &&
-            <AdminPanel closeAdminPanel={closeAdminPanel}/>
+            <AdminPanel admin={admin} setAdmin={setAdminChild} closeAdminPanel={closeAdminPanel}/>
         }
     </div>
     )
