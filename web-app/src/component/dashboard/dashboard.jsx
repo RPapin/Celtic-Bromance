@@ -58,7 +58,7 @@ const Dashboard = ({admin, setAdmin}) => {
                 <ModalCheck text={newResult}/>
             }
         <div className={'container'}>
-            {!fullResult && loading &&
+            {!fullResult && loading && admin &&
             <div className='actionsContainer'>
                 <Button variant="outline-primary" onClick={startChampionnship}>Start a new championnship !</Button>
             </div>

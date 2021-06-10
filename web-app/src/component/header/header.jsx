@@ -9,6 +9,7 @@ const Header = ({admin, setAdmin}) => {
     const readData = new ReadData()
     const [adminPanel, setAdminPanel] = useState(false)
     const showAdminPanel = () => {
+        console.log('showAdminPanel')
         setAdminPanel(true)
     }
     const closeAdminPanel = () => {

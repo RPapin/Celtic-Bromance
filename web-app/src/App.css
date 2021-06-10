@@ -1,8 +1,11 @@
+.root {
+  background-color: #f7f7f7;
+}
 .App {
   display: flex;
   padding: 1rem 5rem;
   flex-direction: column;
-  background-color: #f7f7f7;
+
   align-items: center;
   justify-content: space-around;
   max-height: 100%;
