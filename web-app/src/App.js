@@ -3,6 +3,7 @@ import './App.css';
 import Dashboard from './component/dashboard/dashboard';
 import Header from './component/header/header';
 import React, { useState, useEffect } from 'react'
+import ReadData from './services/readData'
 // import Test from './component/test/test';
 
 function App() {
@@ -11,7 +12,7 @@ function App() {
   useEffect(() => {
     let adminLocal = localStorage.getItem('admin')
     if(adminLocal !== "false")setAdmin(adminLocal)
-
+    
     }, [admin])
   return (
     <div className="App">

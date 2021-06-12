@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import ReadData from '../../services/readData'
 import Dropdown from 'react-bootstrap/Dropdown';
 import './header.css'
 import AdminPanel from '../adminPanel/adminPanel';
 
 
 const Header = ({admin, setAdmin}) => {
-    const readData = new ReadData()
     const [adminPanel, setAdminPanel] = useState(false)
     const showAdminPanel = () => {
-        console.log('showAdminPanel')
         setAdminPanel(true)
     }
     const closeAdminPanel = () => {
@@ -17,13 +14,12 @@ const Header = ({admin, setAdmin}) => {
     }
     const setAdminChild = (value) => {
         localStorage.setItem('admin', value);
-        console.log("setAdminChild " + value)
         setAdmin(value)
     }
     return (
 
     <div className={'header'}>
-        <img src={'../CelticBromanceLogoFINAL.png'} className='topLogo'></img>
+        <img src={'../CelticBromanceLogoFINAL.png'} className='topLogo' alt="celtic-bromance.png" ></img>
         <h1 className="title">Celtic Bromance Championnship</h1>
         <Dropdown>
             <Dropdown.Toggle variant="info" id="dropdown-basic">

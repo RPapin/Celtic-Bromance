@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
@@ -15,7 +15,7 @@ const AdminPanel = ({admin, setAdmin, closeAdminPanel}) => {
     
     const checkAdmin = (event) => {
       event.preventDefault();
-        if(password == 'aaa'){
+        if(password === 'aaa'){
           localStorage.setItem('admin', true);
           setAdmin(true)
           closeAdminPanel()

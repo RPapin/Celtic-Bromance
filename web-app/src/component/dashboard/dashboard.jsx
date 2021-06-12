@@ -14,6 +14,7 @@ const Dashboard = ({admin, setAdmin}) => {
     const [newResult, setNewResult] = useState(false)
     const [fullResult, setFullResult] = useState(false)
     const [loading, setLoading] = useState(false)
+    const [serverInfo, setServerInfo] = useState(false)
 
     const getNextRoundInfo = (nextRoundInfo) => {
         const eventInfo = JSON.parse(JSON.stringify(nextRoundInfo.eventInfo))
@@ -25,30 +26,42 @@ const Dashboard = ({admin, setAdmin}) => {
         setNewResult(nextRoundInfo.foundNewResults)
     }
     const startChampionnship = async () => {
-        let firstRoundInfo = await readData.startChampionnship()
-        getNextRoundInfo(firstRoundInfo)
+        let firstRoundInfo = await readData.callLocalApi("start_championnship")
+        if(firstRoundInfo){
+            getNextRoundInfo(firstRoundInfo)
+            setServerInfo(true)
+        } else setServerInfo(false)
     }
     const lunchServer = async () => {
-        let serverStatus = await readData.launchServer()
+        let serverStatus = await readData.callLocalApi("launch_server")
+        if(serverStatus){
+            setServerInfo(true)
+        } else setServerInfo(false)
     }
     const seeResult = async () => {
-        let allInfo = await readData.seeResult()
-        if(allInfo['nextRoundInfo']){
-            allInfo['nextRoundInfo']['foundNewResults'] = allInfo['foundNewResults']
-            getNextRoundInfo(allInfo['nextRoundInfo'])
-        }
-        setFullResult(allInfo['standings'])
-        setLoading(true)
+        let allInfo = await readData.callLocalApi("display_result")
+        if(allInfo){
+            if(allInfo['nextRoundInfo']){
+                allInfo['nextRoundInfo']['foundNewResults'] = allInfo['foundNewResults']
+                getNextRoundInfo(allInfo['nextRoundInfo'])
+            }
+            setFullResult(allInfo['standings'])
+            setLoading(true)
+            setServerInfo(true)
+        } else setServerInfo(false)
     }
     const resetChampionnship = async () => {
-        let resetStatus = await readData.resetChampionnship()
-        setGridNextRound(null)
-        setInfoNextRound(null)
-        setFullResult(null)
-        setNewResult('Championship has been reset')
+        let resetStatus = await readData.callLocalApi("reset_championnship")
+        if(resetStatus){
+            setGridNextRound(null)
+            setInfoNextRound(null)
+            setFullResult(null)
+            setNewResult('Championship has been reset')
+            setServerInfo(true)
+        } else setServerInfo(false)
+
     }
     useEffect( () => {
-        console.log('dash ' + admin)
         if(!loading)seeResult()
     }, [])
     return (
@@ -57,8 +70,11 @@ const Dashboard = ({admin, setAdmin}) => {
             {newResult &&
                 <ModalCheck text={newResult}/>
             }
+            {!serverInfo && 
+            <div className="server-info"> The ACC server is not connected</div>
+            }
         <div className={'container'}>
-            {!fullResult && loading && admin &&
+            {!fullResult && loading && admin && serverInfo &&
             <div className='actionsContainer'>
                 <Button variant="outline-primary" onClick={startChampionnship}>Start a new championnship !</Button>
             </div>
