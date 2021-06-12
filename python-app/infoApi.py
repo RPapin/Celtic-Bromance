@@ -6,12 +6,23 @@ from os.path import isfile, join
 import accRandomizer as accR
 from flask_cors import CORS, cross_origin
 from flask import jsonify
+from flask_ngrok import run_with_ngrok
+from threading import Timer
+import atexit
+import subprocess
+from pathlib import Path
+import tempfile
+import time
+import requests
+
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
+run_with_ngrok(app)
 # app.config["DEBUG"] = True
 
 onlyfiles = [f for f in listdir(os.getcwd()) if isfile(join(os.getcwd(), f))]
 pathData = os.path.join(os.getcwd(), 'data.json')
+ngrok_address = ''
 
 @app.route('/', methods=['GET'])
 def home():
@@ -45,5 +56,31 @@ def api_id():
         id = int(request.args['id'])
     else:
         return "Error: No id field provided. Please specify an id."
+
+def ngrok_url():
+    # ngrok_path = str(Path(tempfile.gettempdir(), "ngrok"))
+    # executable = str(Path(ngrok_path, "ngrok.exe"))
+    # ngrok = subprocess.Popen([executable, 'http', '5000'])
+    # atexit.register(ngrok.terminate)
+    localhost_url = "http://localhost:4040/api/tunnels"  # Url with tunnel details
+    time.sleep(1)
+    tunnel_url = requests.get(localhost_url).text  # Get the tunnel information
+    j = json.loads(tunnel_url)
+
+    tunnel_url = j['tunnels'][0]['public_url']  # Do the parsing of the get
+    API_ENDPOINT = "http://localhost:8000/post_url"
+    
+    # data to be sent to api
+    data = {'tunnel_url':tunnel_url}
+    
+    # sending post request and saving response as response object
+    r = requests.post(url = API_ENDPOINT, data = data)
+    pastebin_url = r.text
+    print(pastebin_url)
+    return tunnel_url
+
 if __name__ == "__main__":
-    app.run(host='localhost')
+    thread = Timer(5, ngrok_url)
+    thread.setDaemon(True)
+    thread.start()
+    app.run()
