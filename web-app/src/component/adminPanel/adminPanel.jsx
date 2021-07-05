@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import './adminPanel.css'
+
+import ModalCheck from '../modals/modalCheck';
 
 
 const AdminPanel = ({admin, setAdmin, closeAdminPanel}) => {
@@ -15,7 +17,7 @@ const AdminPanel = ({admin, setAdmin, closeAdminPanel}) => {
     
     const checkAdmin = (event) => {
       event.preventDefault();
-        if(password === 'aaa'){
+        if(password === 'bbb'){
           localStorage.setItem('admin', true);
           setAdmin(true)
           closeAdminPanel()
@@ -23,7 +25,10 @@ const AdminPanel = ({admin, setAdmin, closeAdminPanel}) => {
     }   
 
     return (
-      
+      <>
+      {admin &&
+        <ModalCheck text={"Success ! You can now change parameters and launch the next round"}/>
+      }
         <Modal show={show} onHide={handleClose}>
           <Form onSubmit={checkAdmin}>
           <Modal.Header closeButton>
@@ -47,7 +52,7 @@ const AdminPanel = ({admin, setAdmin, closeAdminPanel}) => {
            </Modal.Footer>
            </Form>
         </Modal>
-        
+      </>
     );
 
 }
