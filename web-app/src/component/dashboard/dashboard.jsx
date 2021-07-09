@@ -30,20 +30,20 @@ const Dashboard = ({admin, setAdmin}) => {
         setNewResult(nextRoundInfo.foundNewResults)
     }
     const startChampionnship = async () => {
-        let firstRoundInfo = await readData.callLocalApi("start_championnship")
+        let firstRoundInfo = await readData.getLocalApi("start_championnship")
         if(firstRoundInfo){
             getNextRoundInfo(firstRoundInfo)
             setServerInfo(true)
         } else setServerInfo(false)
     }
     const lunchServer = async () => {
-        let serverStatus = await readData.callLocalApi("launch_server")
+        let serverStatus = await readData.getLocalApi("launch_server")
         if(serverStatus){
             setServerInfo(true)
         } else setServerInfo(false)
     }
     const seeResult = async () => {
-        let allInfo = await readData.callLocalApi("display_result")
+        let allInfo = await readData.getLocalApi("display_result")
         if(allInfo){
             if(allInfo['nextRoundInfo']){
                 allInfo['nextRoundInfo']['foundNewResults'] = allInfo['foundNewResults']
@@ -55,7 +55,7 @@ const Dashboard = ({admin, setAdmin}) => {
         } else setServerInfo(false)
     }
     const resetChampionnship = async () => {
-        let resetStatus = await readData.callLocalApi("reset_championnship")
+        let resetStatus = await readData.getLocalApi("reset_championnship")
         if(resetStatus){
             setGridNextRound(null)
             setInfoNextRound(null)
@@ -72,7 +72,7 @@ const Dashboard = ({admin, setAdmin}) => {
     }, [])
     return (
 
-    <div className={'fullContainer'}>
+    <div className={'container'}>
         <AdminParameters admin={admin} setAdmin={setAdmin}/>
             {newResult &&
                 <ModalCheck text={newResult}/>
