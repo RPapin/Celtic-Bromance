@@ -3,6 +3,8 @@ import ReadData from '../../services/readData'
 import Button from 'react-bootstrap/Button';
 import './dashboard.css'
 import ChampionnshipResult from '../championnshipResult/championnshipResult';
+import StartingGrid from '../f1-grid/startingGrid';
+
 import ModalCheck from '../modals/modalCheck';
 
 
@@ -62,6 +64,8 @@ const Dashboard = ({admin, setAdmin}) => {
 
     }
     useEffect( () => {
+        console.log('Dashboard ')
+        console.log(gridNextRound)
         if(!loading)seeResult()
     }, [])
     return (
@@ -70,7 +74,7 @@ const Dashboard = ({admin, setAdmin}) => {
             {newResult &&
                 <ModalCheck text={newResult}/>
             }
-            {!serverInfo && 
+            {!serverInfo && loading && 
             <div className="server-info"> The ACC server is not connected</div>
             }
         <div className={'container'}>
@@ -81,18 +85,15 @@ const Dashboard = ({admin, setAdmin}) => {
             }              
             {infoNextRound && 
                 <div className="infoNextRound">
-                    Info Next Round :
+                    <h3>Info Next Round :</h3>
                         <ul>
                             {infoNextRound.map((label, i) => {
                                 return (<li key={i}>{label[0]} : {label[1]}</li>)
                             })}
                         </ul>
-                    Starting grid : 
-                    <ul>
-                        {gridNextRound.map((label, i) => {
-                            return (<li key={i}>{i + 1}) {label["lastName"]} {label["firstName"]} : {label["car"]} , ballast : {label["ballast"]}, restrictor : {label["restrictor"]}</li>)
-                        })}
-                    </ul>
+                    <h3>Starting grid :</h3> 
+                    <StartingGrid gridNextRound={gridNextRound}/>
+                    
                 {admin && 
                     <div className="adminDiv">
                     <Button variant="outline-primary" onClick={lunchServer} className="bottomBtn">Launch the server </Button>

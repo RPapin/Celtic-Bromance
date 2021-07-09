@@ -11,3 +11,7 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+@font-face {
+  font-family: 'Formula1 Display';
+  src:local('Formula-1'), url(./fonts/Formula-1/Formula1-Bold_web_0.ttf);
+}

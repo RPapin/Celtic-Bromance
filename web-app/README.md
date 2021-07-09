@@ -1,4 +1,4 @@
 # Deploy on Heroku
 git add .
 git commit -m "My first commit"
-git push heroku main
+git push heroku master

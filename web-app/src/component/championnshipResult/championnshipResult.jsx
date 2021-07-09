@@ -83,7 +83,7 @@ const ChampionnshipResult = (props) => {
                     {displayStandings(-1)}
                 </Tab>
                 { props.fullResult['raceResult'].map((answer, i) => {       
-                    return (<Tab eventKey={i} title={"Race "  + (i + 1)}>{displayStandings(i)}</Tab>) 
+                    return (<Tab key={"key" + i } eventKey={i} title={"Race "  + (i + 1)}>{displayStandings(i)}</Tab>) 
                 })}
             </Tabs>
         </>
