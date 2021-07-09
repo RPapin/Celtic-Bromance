@@ -6,6 +6,8 @@ import ChampionnshipResult from '../championnshipResult/championnshipResult';
 import StartingGrid from '../f1-grid/startingGrid';
 
 import ModalCheck from '../modals/modalCheck';
+import AdminParameters from '../adminParameters/adminParameters';
+
 
 
 const Dashboard = ({admin, setAdmin}) => {
@@ -71,6 +73,7 @@ const Dashboard = ({admin, setAdmin}) => {
     return (
 
     <div className={'fullContainer'}>
+        <AdminParameters admin={admin} setAdmin={setAdmin}/>
             {newResult &&
                 <ModalCheck text={newResult}/>
             }

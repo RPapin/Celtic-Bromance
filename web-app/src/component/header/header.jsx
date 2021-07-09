@@ -29,7 +29,10 @@ const Header = ({admin, setAdmin}) => {
             <Dropdown.Menu>
                 <Dropdown.Item href="#/action-1">View older results</Dropdown.Item>
                 {!admin && <Dropdown.Item onClick={showAdminPanel}>Admin Table</Dropdown.Item>}
-                {admin && <Dropdown.Item onClick={() => setAdminChild(false)}>Log out</Dropdown.Item>}
+                {admin && 
+                <>
+                    <Dropdown.Item onClick={() => setAdminChild(false)}>Log out</Dropdown.Item>
+                </>}
             </Dropdown.Menu>
         </Dropdown>
         {adminPanel &&
