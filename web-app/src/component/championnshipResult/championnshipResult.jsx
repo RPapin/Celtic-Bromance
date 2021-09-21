@@ -7,14 +7,18 @@ import './championnshipResult.css'
 
 const ChampionnshipResult = (props) => {
     const [currentTab, setCurrentTab] = useState('Standings');
+    const positionColor = ['gold', 'silver', 'bronze']
     const displayStandings = (raceNumber) => {
-        //Display position per race
-        const renderRaceResult = (playerId) => {
+        //Display position per race for the overall standing page
+        const renderRacePosition = (playerId) => {
+            console.log(props.fullResult)
             let inter =  props.fullResult['raceResult'].map((answer, i) => {      
                 let j = 1
                 return answer[i + 1].map((element) => { 
+                    let classe = ''
                     if(element['playerId'] === playerId){
-                        return <td key={playerId + i}>{element['position']}</td>
+                        if(element['position'] <= positionColor.length)classe = positionColor[element['position'] - 1]
+                        return <td key={playerId + i} className={'tdNumber '}><span className={'spanTd ' + classe}>{element['position']} </span></td>
                     }//The driver DNS the race 
                     else if(j === answer[i + 1].length){
                         return <td key={playerId + i}>DNS</td>
@@ -41,7 +45,7 @@ const ChampionnshipResult = (props) => {
                 <tbody>
                     
                     {props.fullResult['championnshipStanding'].map((driverInfo, i) => {     
-                        return (<tr key={i}><td>{i + 1}</td><td>{driverInfo['firstName'] + ' ' + driverInfo['lastName']}</td>{renderRaceResult(driverInfo['playerId'])}<td>{driverInfo['point']}</td></tr>) 
+                        return (<tr key={i}><td>{i + 1}</td><td>{driverInfo['firstName'] + ' ' + driverInfo['lastName']}</td> {renderRacePosition(driverInfo['playerId'])}<td>{driverInfo['point']}</td></tr>) 
                     })}
                     
                 </tbody>
@@ -49,28 +53,33 @@ const ChampionnshipResult = (props) => {
         } else {
             //display race result
             return (
+            <>
+            <h4>{props.fullResult['trackList'][raceNumber]}</h4>
                 <Table responsive>
                     <thead>
                         <tr>
                         <th>Position</th>
                         <th>Name</th>
+                        <th>Car</th>
                         <th>Point</th>
+                        <th>Position gained</th>
                         </tr>
                     </thead>
                     <tbody>
                         {props.fullResult['raceResult'][raceNumber][raceNumber + 1].map((driverInfo, i) => {     
-                            return (<tr key={i}><td>{i + 1}</td><td>{driverInfo['firstName'] + ' ' + driverInfo['lastName']}</td><td>{driverInfo['point']}</td></tr>) 
+                            return (<tr key={i}><td>{i + 1}</td><td>{driverInfo['firstName'] + ' ' + driverInfo['lastName']}</td><td>{driverInfo['carName']}</td><td>{driverInfo['point']}</td><td>{driverInfo['starting_place'] - driverInfo['position']}</td></tr>) 
                         })}
                         
                     </tbody>
-                </Table>)
+                </Table>
+                </>)
         }
     }
     useEffect( () => {
        
     })
     return (
-    <div className={'container'}>
+    <div className={'containerResult'}>
         {props.fullResult && 
         <>
             <h2>Standings</h2>
