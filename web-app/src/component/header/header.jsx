@@ -35,6 +35,7 @@ const Header = ({admin, setAdmin}) => {
                 </>}
             </Dropdown.Menu>
         </Dropdown>
+        
         {adminPanel &&
             <AdminPanel admin={admin} setAdmin={setAdminChild} closeAdminPanel={closeAdminPanel}/>
         }

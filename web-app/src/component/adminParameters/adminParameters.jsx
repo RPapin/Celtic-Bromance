@@ -13,11 +13,9 @@ const AdminParameters = ({admin, setAdmin, closeAdminPanel}) => {
     const [toggleParam, setToggleParam] = useState(true)
     const [loading, setLoading] = useState(false)
     let paramList = []
-    console.log(admin)
     const fetchData = async () => {
       // let paramFromApi = await readData.callLocalApi("get_param_list")
       //For testing purpose
-      console.log(parameter)
       let list = []
       Object.keys(parameter).map((fileName) => {
         parameter[fileName].map((param, i) => {
@@ -38,7 +36,6 @@ const AdminParameters = ({admin, setAdmin, closeAdminPanel}) => {
     }
     const handleSubmit = (e) => {
       e.preventDefault()
-      console.log(inputList)
     }
     useEffect(() => {
       if(!loading)fetchData()
@@ -51,7 +48,6 @@ const AdminParameters = ({admin, setAdmin, closeAdminPanel}) => {
           <form onSubmit={handleSubmit}>
             {
               inputList.map((param, i) => {
-                console.log(param)
                 return (
                 <div class="form-group">
                   <label for={param.name}>{param.label}</label>
