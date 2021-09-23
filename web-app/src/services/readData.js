@@ -1,4 +1,4 @@
-const baseURL = 'https://celtic-bromance-url.herokuapp.com/' //https://api-suivibourse.herokuapp.com/
+const baseURL = 'https://celtic-bromance-url.herokuapp.com/'
 
 export default class ReadData {
 
@@ -14,10 +14,28 @@ export default class ReadData {
         })
         return fecthedData
     }
-    async callLocalApi(parameter) {
-        const url = await this.getTunnelUrl()
+    async getLocalApi(parameter) {
+        let url = await this.getTunnelUrl()
         if(url !== "no url found"){
             const fecthedData = await fetch(url + parameter)
+            .then(res => {
+                return res.json()
+            })
+            .then((data) => {
+                return data
+            })
+            return fecthedData
+        } else return false
+    }
+    async postLocalApi(parameter, body) {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        };
+        let url = await this.getTunnelUrl()
+        if(url !== "no url found"){
+            const fecthedData = await fetch(url + parameter, requestOptions)
             .then(res => {
                 return res.json()
             })
