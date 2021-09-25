@@ -2,41 +2,49 @@ import React, { useState, useEffect } from 'react'
 import Button from 'react-bootstrap/Button';
 import ReadData from '../../services/readData'
 import Modal from 'react-bootstrap/Modal';
-import './modalCheck.css'
-import Form from 'react-bootstrap/Form'
+import Form from 'react-bootstrap/Form';
 import { useCookies } from 'react-cookie';
 
 
-const ModalConnect = (props) => {
-
-  const [cookies, setCookie] = useCookies(['user']);
+const ModalChooseDriver = (props) => {
+  
   const readData = new ReadData()
   const [show, setShow] = useState(true);
+  const [cookies, setCookie] = useCookies(['user']);
   const [loading, setLoading] = useState(true);
   const [selectDriver, setSelectDriver] = useState([])
-  const [isEmpty, setIsEmpty] = useState(true)
+  const [driverSelected, setDriverSelected] = useState([])
+  const title = props.context === "swapCar" ? "Choose the driver you want to change your car with " : "Choose the driver you want to change your point during the next round ";
 
   const handleSelect = (e) => {
-    setIsEmpty(false)
-    setCookie('user', e.target.value, {path: '/'})
+    setDriverSelected(e.target.value)
   }
   const handleClose = () => setShow(false);
   const fetchDriver = async () => {
     let allInfo = await readData.getLocalApi("fetch_drivers")
     if(allInfo){
-      setSelectDriver(allInfo)
+      let driverAvailable = []
+      allInfo.forEach(element => {
+        if(element['available'])driverAvailable.push(element)
+      });
+      setSelectDriver(driverAvailable)
       setLoading(false)
     }
   }
-    useEffect( () => {
-      if(loading)fetchDriver()
+  const confirmSelect = () => {
+    readData.postLocalApi(props.context, [cookies['user'], driverSelected])
+    setShow(false)
+  }
+  useEffect( () => {
+    if(loading)fetchDriver()
   })
+
   return (
     <>
     {!loading && 
       <Modal show={show} onHide={handleClose}>
-        <Modal.Header>
-          <Modal.Title>Who are you ?</Modal.Title>
+        <Modal.Header closeButton>
+          <Modal.Title>{title}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
         <select class="form-select" aria-label="Default select example" onChange={handleSelect}>
@@ -47,10 +55,7 @@ const ModalConnect = (props) => {
         </select>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Continue as guest
-          </Button>
-          <Button variant="secondary" onClick={handleClose} disabled={isEmpty}>
+          <Button variant="secondary" onClick={confirmSelect}>
             Confirm
           </Button>
         </Modal.Footer>
@@ -60,4 +65,4 @@ const ModalConnect = (props) => {
   );
 }
 
-export default ModalConnect
+export default ModalChooseDriver

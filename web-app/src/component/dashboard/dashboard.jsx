@@ -5,15 +5,17 @@ import Spinner from 'react-bootstrap/Spinner';
 import './dashboard.css'
 import ChampionnshipResult from '../championnshipResult/championnshipResult';
 import StartingGrid from '../f1-grid/startingGrid';
-
+import { useCookies } from 'react-cookie';
 import ModalCheck from '../modals/modalCheck';
 import AdminParameters from '../adminParameters/adminParameters';
+import Joker from '../joker/joker';
 
 
 
 const Dashboard = ({admin, setAdmin}) => {
     const readData = new ReadData()
 
+    const [cookies, setCookie] = useCookies(['user']);
     const [infoNextRound, setInfoNextRound] = useState()
     const [gridNextRound, setGridNextRound] = useState()
     const [newResult, setNewResult] = useState(false)
@@ -96,13 +98,11 @@ const Dashboard = ({admin, setAdmin}) => {
         });
     }
     useEffect( () => {
-        
         if(!loading){
-            console.log('Dashboard useEffect')
             seeResult()
             registerToSSE()
         }
-    })
+    }, [])
     return (
 
     <div className={'container'}>
@@ -127,26 +127,33 @@ const Dashboard = ({admin, setAdmin}) => {
                 <div className="serverStatus">
                     {serverStatus ? <h4 className="up">Server is up !</h4> :  <h4 className="down">Server is down ...</h4>}
                 </div>
-                <div className="infoNextRound">
-                    <h3>Info Next Round :</h3>
-                        <ul>
-                            {infoNextRound.map((label, i) => {
-                                return (<li key={i}>{label[0]} : {label[1]}</li>)
-                            })}
-                        </ul>
-                    <h3>Starting grid :</h3> 
-                    <StartingGrid gridNextRound={gridNextRound}/>
-                    
-                {admin && 
-                    <div className="adminDiv">
-                    {serverStatus ? <Button variant="outline-primary" onClick={shutDownServer} className="bottomBtn">Shut down the server </Button> : <Button variant="outline-primary" onClick={lunchServer} className="bottomBtn">Launch the server </Button>}
-                    <Button variant="outline-primary" onClick={seeResult} className="bottomBtn">Check Result</Button>
-                    <Button variant="outline-primary" onClick={newDraw} className="bottomBtn">New draw</Button>
-                    <Button variant="outline-danger" onClick={() => {
-                        if(window.confirm("You are going to delete the current championnship"))resetChampionnship()
-                    }}>Reset Championnship</Button>
+                <div className="row">
+                    <div className="infoNextRound col-md-8">
+                        <h3>Info Next Round :</h3>
+                            <ul>
+                                {infoNextRound.map((label, i) => {
+                                    return (<li key={i}>{label[0]} : {label[1]}</li>)
+                                })}
+                            </ul>
+                        <h3>Starting grid :</h3> 
+                        <StartingGrid gridNextRound={gridNextRound}/>
+                        
+                    {admin && 
+                        <div className="adminDiv">
+                        {serverStatus ? <Button variant="outline-primary" onClick={shutDownServer} className="bottomBtn">Shut down the server </Button> : <Button variant="outline-primary" onClick={lunchServer} className="bottomBtn">Launch the server </Button>}
+                        <Button variant="outline-primary" onClick={seeResult} className="bottomBtn">Check Result</Button>
+                        <Button variant="outline-primary" onClick={newDraw} className="bottomBtn">New draw</Button>
+                        <Button variant="outline-danger" onClick={() => {
+                            if(window.confirm("You are going to delete the current championnship"))resetChampionnship()
+                        }}>Reset Championnship</Button>
+                        </div>
+                    }
                     </div>
-                }
+                    {  ('user' in cookies) &&
+                        <div className="col-md-4 d-flex justify-content-start">
+                            <Joker />
+                        </div>
+                    }
                 </div>
                 </>
             }   

@@ -11,7 +11,6 @@ const ChampionnshipResult = (props) => {
     const displayStandings = (raceNumber) => {
         //Display position per race for the overall standing page
         const renderRacePosition = (playerId) => {
-            console.log(props.fullResult)
             let inter =  props.fullResult['raceResult'].map((answer, i) => {      
                 let j = 1
                 return answer[i + 1].map((element) => { 
