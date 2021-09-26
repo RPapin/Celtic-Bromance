@@ -7,7 +7,7 @@ import Form from 'react-bootstrap/Form'
 import { useCookies } from 'react-cookie';
 
 
-const ModalConnect = (props) => {
+const ModalConnect = ({setAdmin}) => {
 
   const [cookies, setCookie] = useCookies(['user']);
   const readData = new ReadData()
@@ -15,12 +15,31 @@ const ModalConnect = (props) => {
   const [loading, setLoading] = useState(true);
   const [selectDriver, setSelectDriver] = useState([])
   const [isEmpty, setIsEmpty] = useState(true)
+  const [driverId, setDriverId] = useState()
+  const [driverName, setDriverName] = useState()
 
   const handleSelect = (e) => {
+    const currentDrivername = document.getElementById(e.target.value).getAttribute('drivername')
+    setDriverId(e.target.value)
+    setDriverName(currentDrivername)
     setIsEmpty(false)
-    setCookie('user', e.target.value, {path: '/'})
   }
+
   const handleClose = () => setShow(false);
+  const handleConfirm = () => {
+    var driverInfo = selectDriver.filter(obj => {
+      return obj['Steam id '] === driverId
+    })
+    console.log(driverInfo)
+    if(driverInfo[0]['isAdmin']){
+      console.log('Adminnn')
+      localStorage.setItem('admin', true);
+      setAdmin(true)
+    }
+    setCookie('user', driverId, {path: '/'})
+    setCookie('name', driverName, {path: '/'})
+    handleClose();
+  }
   const fetchDriver = async () => {
     let allInfo = await readData.getLocalApi("fetch_drivers")
     if(allInfo){
@@ -42,7 +61,7 @@ const ModalConnect = (props) => {
         <select class="form-select" aria-label="Default select example" onChange={handleSelect}>
           <option></option>
           {selectDriver.map((element) => {
-            return <option value={element["Steam id "]}>{element["First name"]} {element["Surname"]}</option>
+            return <option id={element["Steam id "]} value={element["Steam id "]} drivername={element["First name"] + ' ' + element["Surname"]}>{element["First name"]} {element["Surname"]}</option>
           })}
         </select>
         </Modal.Body>
@@ -50,7 +69,7 @@ const ModalConnect = (props) => {
           <Button variant="secondary" onClick={handleClose}>
             Continue as guest
           </Button>
-          <Button variant="secondary" onClick={handleClose} disabled={isEmpty}>
+          <Button variant="secondary" onClick={handleConfirm} disabled={isEmpty}>
             Confirm
           </Button>
         </Modal.Footer>

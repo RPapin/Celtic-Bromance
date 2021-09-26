@@ -8,7 +8,6 @@ export default class ReadData {
             return res.json()
         })
         .then((data) => {
-            console.log(data.error)
             if (data.error) return data.error
             else return data.url
         })

@@ -26,7 +26,7 @@ const Dashboard = ({admin, setAdmin}) => {
 
     const getNextRoundInfo = (nextRoundInfo) => {
         const eventInfo = JSON.parse(JSON.stringify(nextRoundInfo.eventInfo))
-        const gridInfo = JSON.parse(JSON.stringify(nextRoundInfo.usersInfo))
+        const gridInfo = JSON.parse(JSON.stringify(nextRoundInfo.usersInfo.usersInfo))
         let eventInfoArray = [] 
         Object.keys(eventInfo).forEach(key => eventInfoArray.push([key, eventInfo[key]]))
         setGridNextRound(gridInfo)
@@ -58,6 +58,7 @@ const Dashboard = ({admin, setAdmin}) => {
         setLoading(true)
         let allInfo = await readData.getLocalApi("display_result")
         if(allInfo){
+            console.log(allInfo)
             if(allInfo['nextRoundInfo']){
                 allInfo['nextRoundInfo']['foundNewResults'] = allInfo['foundNewResults']
                 getNextRoundInfo(allInfo['nextRoundInfo'])
@@ -150,8 +151,8 @@ const Dashboard = ({admin, setAdmin}) => {
                     }
                     </div>
                     {  ('user' in cookies) &&
-                        <div className="col-md-4 d-flex justify-content-start">
-                            <Joker />
+                        <div className="col-md-4">
+                            <Joker seeResult={seeResult}/>
                         </div>
                     }
                 </div>

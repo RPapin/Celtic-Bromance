@@ -9,7 +9,6 @@ import { useCookies } from 'react-cookie';
 const ModalChooseDriver = (props) => {
   
   const readData = new ReadData()
-  const [show, setShow] = useState(true);
   const [cookies, setCookie] = useCookies(['user']);
   const [loading, setLoading] = useState(true);
   const [selectDriver, setSelectDriver] = useState([])
@@ -19,21 +18,23 @@ const ModalChooseDriver = (props) => {
   const handleSelect = (e) => {
     setDriverSelected(e.target.value)
   }
-  const handleClose = () => setShow(false);
+  const handleClose = () => props.closeModal();
   const fetchDriver = async () => {
     let allInfo = await readData.getLocalApi("fetch_drivers")
     if(allInfo){
       let driverAvailable = []
       allInfo.forEach(element => {
-        if(element['available'])driverAvailable.push(element)
+        if(element['available'] && element['Steam id '] !== cookies['user'])driverAvailable.push(element)
       });
       setSelectDriver(driverAvailable)
       setLoading(false)
     }
   }
-  const confirmSelect = () => {
-    readData.postLocalApi(props.context, [cookies['user'], driverSelected])
-    setShow(false)
+  const confirmSelect = async () => {
+    readData.postLocalApi(props.context, [cookies['user'], driverSelected]).then(() => {
+      props.seeResult()
+    })
+    props.closeModal()
   }
   useEffect( () => {
     if(loading)fetchDriver()
@@ -42,7 +43,7 @@ const ModalChooseDriver = (props) => {
   return (
     <>
     {!loading && 
-      <Modal show={show} onHide={handleClose}>
+      <Modal show={true} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>{title}</Modal.Title>
         </Modal.Header>
@@ -50,7 +51,7 @@ const ModalChooseDriver = (props) => {
         <select class="form-select" aria-label="Default select example" onChange={handleSelect}>
           <option></option>
           {selectDriver.map((element) => {
-            return <option value={element["Steam id "]}>{element["First name"]} {element["Surname"]}</option>
+            return <option value={element["Steam id "]} key={element["Steam id "]}>{element["First name"]} {element["Surname"]}</option>
           })}
         </select>
         </Modal.Body>

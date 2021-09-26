@@ -26,7 +26,7 @@ function App() {
           <Dashboard admin={admin} setAdmin={setAdmin}/>
         }
         
-        {!('user' in cookies) && <ModalConnect></ModalConnect>}
+        {!('user' in cookies) && <ModalConnect setAdmin={setAdmin}></ModalConnect>}
         
     </div>
   );
