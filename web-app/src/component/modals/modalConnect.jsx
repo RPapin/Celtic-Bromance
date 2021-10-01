@@ -32,9 +32,11 @@ const ModalConnect = ({setAdmin}) => {
     })
     console.log(driverInfo)
     if(driverInfo[0]['isAdmin']){
-      console.log('Adminnn')
       localStorage.setItem('admin', true);
       setAdmin(true)
+    } else {
+      localStorage.setItem('admin', false);
+      setAdmin(false)
     }
     setCookie('user', driverId, {path: '/'})
     setCookie('name', driverName, {path: '/'})

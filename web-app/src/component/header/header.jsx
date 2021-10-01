@@ -39,7 +39,7 @@ const Header = ({admin, setAdmin, olderResult, setIsOlderResult}) => {
 
         {
             logIn && 
-            <ModalConnect />
+            <ModalConnect setAdmin={setAdmin}/>
         }
 
     </div>

@@ -57,8 +57,8 @@ const Dashboard = ({admin, setAdmin}) => {
     const seeResult = async () => {
         setLoading(true)
         let allInfo = await readData.getLocalApi("display_result")
+        console.log("allinfo " + allInfo)
         if(allInfo){
-            console.log(allInfo)
             if(allInfo['nextRoundInfo']){
                 allInfo['nextRoundInfo']['foundNewResults'] = allInfo['foundNewResults']
                 getNextRoundInfo(allInfo['nextRoundInfo'])
@@ -86,7 +86,6 @@ const Dashboard = ({admin, setAdmin}) => {
             const result = JSON.parse(e.data)
             getNextRoundInfo(result['nextRoundInfo'])
             setFullResult(result['standings'])
-            setServerInfo(true)
             setServerStatus(result['serverStatus'])
         });
         eventSource.addEventListener("updateServerStatus", e =>{
@@ -99,15 +98,16 @@ const Dashboard = ({admin, setAdmin}) => {
         });
     }
     useEffect( () => {
+        console.log(serverInfo)
+        console.log(loading)
         if(!loading){
             seeResult()
             registerToSSE()
         }
     }, [])
     return (
-
     <div className={'container'}>
-        {!serverInfo && loading ?
+        {!serverInfo ?
             // <div className="server-info"> The ACC server is not connected</div>
             <div className="spinnerContainer"><Spinner animation="grow" variant="danger" /></div>
            :
