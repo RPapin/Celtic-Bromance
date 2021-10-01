@@ -30,7 +30,6 @@ const ModalConnect = ({setAdmin}) => {
     var driverInfo = selectDriver.filter(obj => {
       return obj['Steam id '] === driverId
     })
-    console.log(driverInfo)
     if(driverInfo[0]['isAdmin']){
       localStorage.setItem('admin', true);
       setAdmin(true)

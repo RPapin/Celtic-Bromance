@@ -57,7 +57,6 @@ const Dashboard = ({admin, setAdmin}) => {
     const seeResult = async () => {
         setLoading(true)
         let allInfo = await readData.getLocalApi("display_result")
-        console.log("allinfo " + allInfo)
         if(allInfo){
             if(allInfo['nextRoundInfo']){
                 allInfo['nextRoundInfo']['foundNewResults'] = allInfo['foundNewResults']
@@ -98,8 +97,6 @@ const Dashboard = ({admin, setAdmin}) => {
         });
     }
     useEffect( () => {
-        console.log(serverInfo)
-        console.log(loading)
         if(!loading){
             seeResult()
             registerToSSE()
